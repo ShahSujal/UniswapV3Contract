@@ -7,7 +7,7 @@ export default buildModule("DeployModule", (m) => {
     const mockToken = m.contract("MockToken", ["Mock Token", "MTK", 18, initialSupply]);
 
     // Deploy MockRateOracle
-    const rateOracle = m.contract("MockRateOracle", [100]);
+    const rateOracle = m.contract("UniswapV3Oracle");
 
     // Deploy MockUniswapV3PositionManager
     const positionManager = m.contract("MockUniswapV3PositionManager");

@@ -1,6 +1,4 @@
 {
-  "DeployModule#MockRateOracle": "0x6D83fE7f7564FC5d9C21c836138251008f2549b2",
-  "DeployModule#MockToken": "0x5BFc0405a027Ab3E5E459488f3371D7CF3e174B6",
-  "DeployModule#MockUniswapV3PositionManager": "0x1b7Ed98D72220C4FC5842A7Ff68470bb5FcA6b78",
-  "DeployModule#DerivativeVault": "0x4aA9a0D343b2d8BB86cF8080c5B867DB6DC8971e"
+  "DeployModule#DerivativeVault": "0xa07C516e94c7BF14cCaDc6bDb2FeDd2d766e64cC",
+  "DeployModule#MockToken": "0xc6C7b0de2ce7E5C30731b882fb8b9Ab7CAAFBAb2"
 }

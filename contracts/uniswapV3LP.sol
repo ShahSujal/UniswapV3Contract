@@ -76,6 +76,7 @@ contract DerivativeVault is Ownable, ReentrancyGuard {
         bool isBuyOption;
         bool exercised;
         uint256 collateralAmount;
+        address poolAddress; // Pool address added for oracle
     }
 
     // Mapping from derivative token address to option details
@@ -117,7 +118,8 @@ contract DerivativeVault is Ownable, ReentrancyGuard {
         uint256 exercisePrice,
         uint256 expiryTime,
         bool isBuyOption,
-        uint256 issueAmount
+        uint256 issueAmount,
+        address poolAddress // Added pool address to the function
     ) external nonReentrant {
         require(collateralAsset != address(0), "Invalid collateral asset");
         require(exercisePrice > 0, "Exercise price must be positive");
@@ -142,7 +144,8 @@ contract DerivativeVault is Ownable, ReentrancyGuard {
             expiryTime: expiryTime,
             isBuyOption: isBuyOption,
             exercised: false,
-            collateralAmount: issueAmount
+            collateralAmount: issueAmount,
+            poolAddress: poolAddress // Storing pool address
         });
 
         // Store the user's derivative token for lookup
@@ -180,7 +183,7 @@ contract DerivativeVault is Ownable, ReentrancyGuard {
         DerivativeToken token = DerivativeToken(derivativeToken);
         require(token.balanceOf(msg.sender) >= amount, "Insufficient balance");
 
-        (uint256 currentPrice, uint256 timestamp) = rateOracle.getRate(option.collateralAsset);
+        (uint256 currentPrice, uint256 timestamp) = rateOracle.getRate(option.poolAddress);
         require(validatedOracles[address(rateOracle)], "Oracle not validated");
         require(block.timestamp - timestamp <= 30 minutes, "Stale price data");
 
@@ -210,6 +213,26 @@ contract DerivativeVault is Ownable, ReentrancyGuard {
         }
 
         emit OptionExercised(derivativeToken, msg.sender, earnings);
+    }
+
+    function getUserExercises(address user) external view returns (DerivativeInfo[] memory) {
+        uint256 count = 0;
+        for (uint i = 0; i < 1000; i++) {
+            if (userDerivativeTokens[user] != address(0)) {
+                count++;
+            }
+        }
+
+        DerivativeInfo[] memory exercises = new DerivativeInfo[](count);
+        uint256 index = 0;
+        for (uint i = 0; i < 1000; i++) {
+            address derivativeToken = userDerivativeTokens[user];
+            if (derivativeToken != address(0)) {
+                exercises[index] = derivativeRecords[derivativeToken];
+                index++;
+            }
+        }
+        return exercises;
     }
 
     function _transferToken(address token, address to, uint256 amount) internal returns (bool) {
